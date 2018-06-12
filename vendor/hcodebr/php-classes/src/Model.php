@@ -17,7 +17,7 @@ class Model
         switch($method)
         {
             case "get":
-                return $this->$values[$fieldName]; 
+                return $this->values[$fieldName]; 
                 break;
 
             case "set":
