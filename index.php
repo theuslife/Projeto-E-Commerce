@@ -17,6 +17,12 @@
 	//Classe de usuário
 	use \Hcode\Model\User;
 
+	/* 
+		Algumas classes e trechos de códigos possuem comentários em inglês 
+		enquanto outras não. Durante o progresso do projeto tive por preferência 
+		tentar treinar o meu inglês :)
+	*/
+
 // 							Finalizado configurações bases do Index 			
 
 
@@ -120,7 +126,6 @@ $app->get("/admin/users/:iduser/delete", function($iduser){
 	header("Location: /admin/users");
 	exit;
 
-
 });
 
 //Users list
@@ -164,6 +169,77 @@ $app->post("/admin/users/:iduser", function($iduser){
 	$user->update();
 	header("Location: /admin/users");
 	exit;
+
+});
+
+//If user forgets the password
+$app->get("/admin/forgot", function(){
+
+	$page = new PageAdmin([
+		"header"=>false,
+		"footer"=>false
+	]);
+
+	$page->setTpl("forgot");
+});
+
+//Post
+$app->post("/admin/forgot", function(){
+
+	$user = User::getForgot($_POST["email"]);
+
+	header("Location: /admin/forgot/sent");
+	exit;
+
+});
+
+//if user send a email for recovery, from post above
+$app->get("/admin/forgot/sent", function(){
+	$page = new PageAdmin([
+		"header"=>false,
+		"footer"=>false
+	]);
+
+	$page->setTpl("forgot-sent");
+
+});
+
+//New User Password 
+$app->get("/admin/forgot/reset", function(){
+
+	$user = User::validForgotDecrypt($_GET["code"]);
+
+	$page = new PageAdmin([
+		"header"=>false,
+		"footer"=>false
+	]);
+
+	$page->setTpl("forgot-reset", array(
+		"name"=>$user["desperson"],
+		"code"=>$_GET["code"]
+	));
+
+});
+
+$app->post("admin/forgot/reset", function(){
+	
+	$forgot = User::validForgotDecrypt($_POST["code"]);
+	User::setForgotUsed($forgot["idrecovery"]);
+	$user = new User();
+	$user->get((int)$forgot["iduser"]);
+	
+	password_hash($_POST["password"], PASSWORD_DEFAULT, [
+		"cost"=>12
+	]);
+
+	$user->setPassword($_POST["password"]);
+
+	$page = new PageAdmin([
+		"header"=>false,
+		"footer"=>false
+	]);
+
+	$page->setTpl("forgot-reset-sucess");
 
 });
 
