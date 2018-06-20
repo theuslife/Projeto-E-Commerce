@@ -17,6 +17,9 @@
 	//Classe de usuário
 	use \Hcode\Model\User;
 
+	//Classe de categorías
+	use \Hcode\Model\Category;
+
 	/* 
 		Algumas classes e trechos de códigos possuem comentários em inglês 
 		enquanto outras não. Durante o progresso do projeto tive por preferência 
@@ -72,16 +75,22 @@ $app->get('/admin/login', function(){
 //Post of login
 $app->post('/admin/login', function(){
 	
+	
 	User::login($_POST["login"], $_POST["password"]);
+	
 	header("Location: /admin");
+	
 	exit;
 
 });
 
 //Logout of users
 $app->get('/admin/logout', function(){
+	
 	User::logout();
+	
 	header("Location: /admin/login");
+	
 	exit;
 });
 
@@ -107,7 +116,9 @@ $app->get("/admin/users", function(){
 $app->get("/admin/users/create", function(){
 
 	User::verifyLogin();
+	
 	$page = new PageAdmin();
+	
 	$page->setTpl("users-create");
 
 });
@@ -149,11 +160,17 @@ $app->get("/admin/users/:iduser", function($iduser){
 $app->post("/admin/users/create", function(){
 	
 	User::verifyLogin();
+	
 	$user = new User();
+	
 	$_POST["inadmin"] = (isset($_POST["inadmin"]))?1:0;
+	
 	$user->setData($_POST);
+	
 	$user->save();
+	
 	header("Location: /admin/users");
+	
 	exit;
 
 });
@@ -162,12 +179,19 @@ $app->post("/admin/users/create", function(){
 $app->post("/admin/users/:iduser", function($iduser){
 	
 	User::verifyLogin();
+
 	$user = new User();
+	
 	$_POST["inadmin"] = (isset($_POST["inadmin"]))?1:0;
+
 	$user->get((int)$iduser);
+
 	$user->setData($_POST);
+
 	$user->update();
+
 	header("Location: /admin/users");
+
 	exit;
 
 });
@@ -221,11 +245,15 @@ $app->get("/admin/forgot/reset", function(){
 
 });
 
+//Success in password exchange
 $app->post("admin/forgot/reset", function(){
 	
 	$forgot = User::validForgotDecrypt($_POST["code"]);
+
 	User::setForgotUsed($forgot["idrecovery"]);
+
 	$user = new User();
+
 	$user->get((int)$forgot["iduser"]);
 	
 	password_hash($_POST["password"], PASSWORD_DEFAULT, [
@@ -240,6 +268,102 @@ $app->post("admin/forgot/reset", function(){
 	]);
 
 	$page->setTpl("forgot-reset-sucess");
+
+});
+
+//Categories
+$app->get("/admin/categories", function(){
+	
+	User::verifyLogin();
+
+	$categories = Category::listAll();
+
+	$page = new PageAdmin();
+	
+	$page->setTpl("categories", array(
+		"categories"=>$categories
+	));
+
+});
+
+//Create a new category
+$app->get("/admin/categories/create", function(){
+	
+	User::verifyLogin();
+
+	$page = new PageAdmin();
+	
+	$page->setTpl("categories-create");
+
+});
+
+//Receives a post from the route above
+$app->post("/admin/categories/create", function(){
+	
+	User::verifyLogin();
+
+	$category = new Category();
+
+	$category->setData($_POST);
+	
+	$category->save();
+	
+	header("Location: /admin/categories");
+	
+	exit;
+
+});
+
+//Update category
+$app->get("/admin/categories/:idcategory", function($idcategory){
+
+	User::verifyLogin();
+
+	$category = new Category();
+
+	$category->get((int) $idcategory);
+
+	$page = new PageAdmin();
+
+	$page->setTpl("categories-update", array(
+		"category"=>$category->getValues()
+	));
+
+});
+
+$app->post("/admin/categories/:idcategory", function($idcategory){
+
+	User::verifyLogin();
+
+	$category = new Category();
+
+	$category->get((int)$idcategory);
+
+	$category->setData($_POST);
+
+	$category->save();
+
+	header("Location: /admin/categories");
+	
+	exit;
+
+});
+
+
+//Delete category
+$app->get("/admin/categories/:idcategory/delete", function($idcategory){
+
+	User::verifyLogin();
+
+	$category = new Category();
+	
+	$category->get((int) $idcategory);
+
+	$category->delete();
+
+	header("Location: /admin/categories");
+
+	exit;
 
 });
 

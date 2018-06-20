@@ -100,6 +100,7 @@ class User extends Model
             ":nrphone"=>$this->getnrphone(),
             ":inadmin"=>$this->getinadmin()
         ));
+        
         $this->setData($results[0]);
 
     }
