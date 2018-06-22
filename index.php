@@ -20,6 +20,9 @@
 	//Classe de categorías
 	use \Hcode\Model\Category;
 
+	//Classe de produtos
+	use \Hcode\Model\Products;
+
 	/* 
 		Algumas classes e trechos de códigos possuem comentários em inglês 
 		enquanto outras não. Durante o progresso do projeto tive por preferência 
@@ -331,6 +334,7 @@ $app->get("/admin/categories/:idcategory", function($idcategory){
 
 });
 
+//Save
 $app->post("/admin/categories/:idcategory", function($idcategory){
 
 	User::verifyLogin();
@@ -367,6 +371,7 @@ $app->get("/admin/categories/:idcategory/delete", function($idcategory){
 
 });
 
+//Take a category according to ID
 $app->get("/categories/:idcategory", function($idcategory){
 
 	$category = new Category();
@@ -381,6 +386,102 @@ $app->get("/categories/:idcategory", function($idcategory){
 	));
 
 });
+
+$app->get("/admin/products", function(){
+
+	User::verifyLogin();
+
+	$products = new Products();
+
+	$products = Products::read();
+
+	$page = new PageAdmin();
+	
+	$page->setTpl("products", array(
+		"products"=>$products
+	));
+
+});
+
+$app->get("/admin/products/create", function(){
+
+	User::verifyLogin();
+
+	$page = new PageAdmin();
+
+	$page->setTpl("products-create");
+
+});
+
+$app->post("/admin/products/create", function(){
+
+	User::verifyLogin();
+
+	$product = new Products();
+
+	$product->setData($_POST);
+
+	$product->create();
+
+	Header("Location: /admin/products");
+
+	exit;
+
+});
+
+$app->get("/admin/products/:idproduct", function($idproduct){
+
+	User::verifyLogin();
+
+	$product = new Products();
+
+	$product->getProduct((int) $idproduct);
+
+	$page = new PageAdmin();
+
+	$page->setTpl("products-update", array(
+
+		"product"=>$product->getValues()
+	
+	));
+
+});
+
+$app->post("/admin/products/:idproduct", function($idproduct){
+
+	$product = new Products();
+
+	$product->getProduct((int)$idproduct);
+
+	$product->setData($_POST);
+
+	$product->update();
+
+	if($_FILES["file"]["name"] !== "")
+	{
+		$product->setPhoto($_FILES["file"]);
+	}
+
+	Header("Location: /admin/products");
+	
+	exit;
+
+});
+
+$app->get("/admin/products/:idproduct/delete", function($idproduct){
+
+	$product = new Products();
+
+	$product->getProduct((int)$idproduct);
+
+	$product->delete();
+
+	Header("Location: /admin/products");
+	
+	exit;
+	
+});
+
 
 //Execute all routes
 $app->run();
