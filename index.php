@@ -16,11 +16,12 @@ $app = new Slim();
 require_once("functions.php");
 
 //Rotas requiridas
+require_once("site.php");
 require_once("admin-login.php");
 require_once("admin-users.php");
 require_once("admin-categories.php");
 require_once("admin-products.php");
-require_once("main.php");
+
 
 //Mostra os erros caso ocorra
 $app->config('debug', true);

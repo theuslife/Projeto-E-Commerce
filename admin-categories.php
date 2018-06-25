@@ -1,16 +1,12 @@
 <?php
 
-//Usando o Slim framework para routes
-use \Slim\Slim;
-
 //Usando a classe Page para gerar o template completo HTML (Header, index, footer)
 use \Hcode\PageAdmin;
 
 //Classe de categorias
 use \Hcode\Model\Category;
+use \Hcode\Model\Products;
 use \Hcode\Model\User;
-
-
 
 //Categories
 $app->get("/admin/categories", function(){
@@ -108,3 +104,62 @@ $app->get("/admin/categories/:idcategory/delete", function($idcategory){
 	exit;
 
 });
+
+$app->get("/admin/categories/:idcategory/products", function($idcategory){
+
+	User::verifyLogin();
+
+	$category = new Category();
+
+	$category->get((int)$idcategory);
+
+	$page = new PageAdmin();
+
+	$page->setTpl("categories-products", array(
+		"category"=>$category->getValues(),
+		"productsRelated"=>$category->getProducts(),
+		"productsNotRelated"=>$category->getProducts(false)
+	));
+
+});
+
+$app->get("/admin/categories/:idcategory/products/:idproduct/add", function($idcategory, $idproduct){
+
+	User::verifyLogin();
+
+	$category = new Category();
+
+	$category->get((int)$idcategory);
+
+	$product = new Products();
+
+	$product->getProduct((int)$idproduct);
+
+	$category->addProduct($product);
+
+	header("Location: /admin/categories/" .$idcategory. "/products");
+
+	exit;
+
+});
+
+$app->get("/admin/categories/:idcategory/products/:idproduct/remove", function($idcategory, $idproduct){
+
+	User::verifyLogin();
+
+	$category = new Category();
+
+	$category->get((int)$idcategory);
+
+	$product = new Products();
+
+	$product->getProduct((int)$idproduct);
+
+	$category->removeProduct($product);
+
+	header("Location: /admin/categories/" .$idcategory. "/products");
+
+	exit;
+
+});
+

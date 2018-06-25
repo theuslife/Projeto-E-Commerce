@@ -1,8 +1,4 @@
 <?php
-
-//Usando o Slim framework para routes
-use \Slim\Slim;
-
 //Usando a classe Page para gerar o template completo HTML (Header, index, footer)
 use \Hcode\PageAdmin;
 
