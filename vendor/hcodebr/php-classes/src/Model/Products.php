@@ -20,6 +20,21 @@ class Products extends Model
 
     }
 
+    public static function checkList($list)
+    {
+
+        foreach ($list as &$row) {
+
+            $product = new Products();
+            $product->setData($row);
+            $row = $product->getValues();
+
+        }
+
+        return $list;
+
+    }
+
     public function create()
     {
         $sql = new Sql;
