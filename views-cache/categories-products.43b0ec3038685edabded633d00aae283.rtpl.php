@@ -34,6 +34,7 @@
                             <th style="width: 240px">&nbsp;</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             <?php $counter1=-1;  if( isset($productsNotRelated) && ( is_array($productsNotRelated) || $productsNotRelated instanceof Traversable ) && sizeof($productsNotRelated) ) foreach( $productsNotRelated as $key1 => $value1 ){ $counter1++; ?>
 
@@ -47,6 +48,7 @@
                             <?php } ?>
 
                         </tbody>
+                        
                     </table>
                 </div>
             </div>
@@ -67,6 +69,7 @@
                             <th style="width: 240px">&nbsp;</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             <?php $counter1=-1;  if( isset($productsRelated) && ( is_array($productsRelated) || $productsRelated instanceof Traversable ) && sizeof($productsRelated) ) foreach( $productsRelated as $key1 => $value1 ){ $counter1++; ?>
 
@@ -80,6 +83,7 @@
                             <?php } ?>
 
                         </tbody>
+                        
                     </table>
                 </div>
             </div>
