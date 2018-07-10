@@ -11,6 +11,46 @@ class User extends Model
     const SESSION = "User";
     const SECRET = "HcodePhp7_Secret";
 
+    public static function getFromSession()
+    {   
+        
+        $user = new User();
+
+        if (isset($_SESSION[user::SESSION]) && (int)$_SESSION[User::SESSION]['iduser'] > 0)
+        {
+            $user->setData($_SESSION[User::SESSION]);
+        }
+
+        return $user;
+
+    }
+
+
+    public static function checkLogin($inadmin = true)
+    {
+
+        if (!isset($_SESSION[user::SESSION])  || !$_SESSION[User::SESSION] || !(int)$_SESSION[User::SESSION]["iduser"] > 0)
+        {
+            return false;
+        }
+        else 
+        {
+            if($inadmin === true && (bool)$_SESSION[User::SESSION]['inadmin'] === true)
+            {
+                return true;
+            } 
+            else if ($inadmin === false) 
+            {
+                return true;
+            } 
+            else 
+            {
+                return false;
+            }
+        }
+
+    }
+
     //Login
     public static function login($login, $password)
     {
@@ -63,7 +103,7 @@ class User extends Model
     //Checks user login
     public static function verifyLogin($inadmin = true)
     {
-        if(!isset($_SESSION[user::SESSION])  || !$_SESSION[User::SESSION] || !(int)$_SESSION[User::SESSION]["iduser"] > 0 || (bool)$_SESSION[User::SESSION]["inadmin"] !== $inadmin)
+        if(User::checkLogin($inadmin) === false)
         {
             header("Location: /admin/login");
             exit;

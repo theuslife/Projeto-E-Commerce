@@ -110,10 +110,12 @@ class Category extends Model
     public function getProductsPage($page = 1, $itemsPerPage = 3)
     {
 
+        //Cálculo para colocarmos no LIMIT de nosso select no banco
         $start = ($page - 1) * $itemsPerPage;
 
         $sql = new Sql();
 
+        //Perceba a variável no ínicio de nosso LIMIT
         $results = $sql->select("SELECT  SQL_CALC_FOUND_ROWS * FROM tb_products a
         INNER JOIN tb_categoriesproducts b ON a.idproduct = b.idproduct
         INNER JOIN tb_categories c ON c.idcategory = b.idcategory
@@ -122,6 +124,7 @@ class Category extends Model
             ":idcategory" => $this->getidcategory()
         ));
 
+        //Contagem de elementos do nosso resultado
         $resultTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal;");
 
         return array(

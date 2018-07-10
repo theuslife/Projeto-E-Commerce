@@ -5,6 +5,7 @@ use \Slim\Slim;
 use \Hcode\Page;
 use \Hcode\Model\Category;
 use \Hcode\Model\Products;
+use \Hcode\Model\Cart;
 
 //Route padrão
 $app->get('/', function() {
@@ -24,10 +25,12 @@ $app->get('/', function() {
 //Take a category according to ID
 $app->get("/categories/:idcategory", function($idcategory){
 
+	//Page é a variável que indica onde está a nossa atual paginação
 	$page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1;
 
 	$category = new Category();
 
+	//Vai pegar os dados dessa categoria
 	$category->get((int)$idcategory);
 
 	$pagination = $category->getProductsPage($page);
@@ -63,6 +66,17 @@ $app->get("/products/:desurl", function($desurl){
 		"product"=>$product->getValues(),
 		"categories"=>$product->getCategories()
 	));
+
+
+});
+
+$app->get("/cart", function(){
+
+	$cart = Cart::getFromSession();
+
+	$page = new Page();
+
+	$page->setTpl("cart");
 
 
 });
