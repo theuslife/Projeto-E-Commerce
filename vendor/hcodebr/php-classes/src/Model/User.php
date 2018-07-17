@@ -9,6 +9,7 @@ class User extends Model
 {
 
     const SESSION = "User";
+    const SESSION_ERROR = "UserError";
     const SECRET = "HcodePhp7_Secret";
 
     public static function getFromSession()
@@ -57,7 +58,10 @@ class User extends Model
 
         $sql = new Sql();
         
-        $results = $sql->select("SELECT * FROM tb_users WHERE deslogin = :LOGINN", array(
+        $results = $sql->select("SELECT * FROM tb_users a 
+        INNER JOIN tb_persons b
+        WHERE a.idperson = b.idperson
+        AND a.deslogin = :LOGINN", array(
             ":LOGINN"=>$login
         ));
         
@@ -68,7 +72,7 @@ class User extends Model
         
         $data = $results[0];
         
-
+        /*
          //Configurando o Login do usuário
         if($data["despassword"] == $password)
         {
@@ -78,14 +82,16 @@ class User extends Model
             //Sessão para pegar os dados de login do usuário
             $_SESSION[User::SESSION] = $user->getValues();
             return $user;
-        } else 
+
+        } 
+        else 
         {
             throw new \Exception("Usuário inexistente ou senha inválida", 1);
         }
+        */
 
-           
-        /*  Login verificando a senha criptografada
-            if(password_verify($password, $data["despassword"]) === true)
+        
+            if(password_verify($password, $data["despassword"]))
             {
                 $user = new User();
                 $user->setData($data);
@@ -97,16 +103,25 @@ class User extends Model
             {
                 throw new \Exception("Usuário inexistente ou senha inválida", 1);
             }
-        */
+     
+
     }
 
     //Checks user login
     public static function verifyLogin($inadmin = true)
     {
-        if(User::checkLogin($inadmin) === false)
+        if(!User::checkLogin($inadmin))
         {
-            header("Location: /admin/login");
-            exit;
+            if($inadmin)
+            {
+                header("Location: /admin/login");
+                exit;
+            } 
+            else 
+            {
+                header("Location: /login");
+                exit;
+            }
         }
     }
 
@@ -135,7 +150,7 @@ class User extends Model
         $results = $sql->select("CALL sp_users_save(:desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", array(
             ":desperson"=>$this->getdesperson(),
             ":deslogin"=>$this->getdeslogin(),
-            ":despassword"=>$this->getdespassword(),
+            ":despassword"=>password_hash($this->getdespassword(), PASSWORD_DEFAULT),
             ":desemail"=>$this->getdesemail(),
             ":nrphone"=>$this->getnrphone(),
             ":inadmin"=>$this->getinadmin()
@@ -155,7 +170,9 @@ class User extends Model
             ":iduser"=>$iduser
         ));
 
-        $this->setData($results[0]);
+        $data = $results[0];
+
+        $this->setData($data);
 
     }
 
@@ -169,7 +186,7 @@ class User extends Model
             ":iduser"=>$this->getiduser(),
             ":desperson"=>$this->getdesperson(),
             ":deslogin"=>$this->getdeslogin(),
-            ":despassword"=>$this->getdespassword(),
+            ":despassword"=>password_hash($this->getdespassword(), PASSWORD_DEFAULT),
             ":desemail"=>$this->getdesemail(),
             ":nrphone"=>$this->getnrphone(),
             ":inadmin"=>$this->getinadmin()
@@ -300,6 +317,31 @@ class User extends Model
             ":passwordd"=>$password,
             ":iduser"=>$this->getiduser()
         ));
+    }
+
+    public static function setMsgError($msg)
+    {
+
+        $_SESSION[Cart::SESSION_ERROR] = $msg;
+
+    }
+
+    public static function getMsgError()
+    {
+
+        $msg = (isset($_SESSION[Cart::SESSION_ERROR])) ? $_SESSION[Cart::SESSION_ERROR]:'';
+
+        User::clearMsgError();
+
+        return $msg;
+
+    }
+
+    public static function clearMsgError()
+    {
+
+        $_SESSION[Cart::SESSION_ERROR] = NULL;
+
     }
 
 }
