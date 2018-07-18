@@ -180,7 +180,9 @@ $app->get('/login', function(){
 
 	$page = new Page();
 	$page->setTpl('login', [
-		'error'=>User::getMsgError()
+		'error'=>User::getMsgError(),
+		'errorRegister'=>User::getErrorRegister(),
+		'registerValues'=>(isset($_SESSION['registerValues']))?$_SESSION['registerValues']:['name'=>'', 'email'=>'', 'phone'=>'', 'password'=>'']
 	]);
 
 });
@@ -207,5 +209,61 @@ $app->get('/logout', function(){
 
 	header('Location: /');
 	exit;
+
+});
+
+$app->post('/register', function(){
+
+	$_SESSION['registerValues'] = $_POST;
+
+	if(!isset($_POST['name']) || $_POST['name'] == '')
+	{
+		User::setErrorRegister('Nome inválido, preencha o campo novamente');
+		Header('Location: /login');
+		exit;
+	}
+
+	if(!isset($_POST['email']) || $_POST['email'] == '')
+	{
+		User::setErrorRegister('Email inválido, preencha o campo novamente');
+		Header('Location: /login');
+		exit;
+	}
+
+	if(!isset($_POST['password']) || $_POST['password'] == '')
+	{
+		User::setErrorRegister('Senha não preenchida. Preencha o campo novamente');
+		Header('Location: /login');
+		exit;
+	}
+
+	if(User::checkLoginExists($_POST['email']) === true)
+	{
+		User::setErrorRegister('Login já sendo utilizado. Tente novamente');
+		Header('Location: /login');
+		exit;
+	}
+
+	$user = new User();
+
+	$user->setData([
+
+		'inadmin'=>0,
+		'desperson'=>$_POST['name'],
+		'deslogin'=>$_POST['email'],
+		'desemail'=>$_POST['email'],
+		'despassword'=>$_POST['password'],
+		'nrphone'=>$_POST['phone']
+
+	]);
+
+	$user->save();
+
+	User::login($_POST['email'], $_POST['password']);
+
+	Header('Location: /checkout');
+	exit;
+
+
 
 });

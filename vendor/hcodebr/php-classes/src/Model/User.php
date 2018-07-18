@@ -11,6 +11,7 @@ class User extends Model
     const SESSION = "User";
     const SESSION_ERROR = "UserError";
     const SECRET = "HcodePhp7_Secret";
+    const SESSION_REGISTER = "UserErrorRegister";
 
     public static function getFromSession()
     {   
@@ -341,6 +342,43 @@ class User extends Model
     {
 
         $_SESSION[Cart::SESSION_ERROR] = NULL;
+
+    }
+
+    public static function setErrorRegister($msg)
+    {
+
+        $_SESSION[User::SESSION_REGISTER] = $msg;
+
+    }
+
+    public static function getErrorRegister()
+    {
+
+        $msg = (isset($_SESSION[User::SESSION_REGISTER])) ? $_SESSION[User::SESSION_REGISTER]:'';
+
+        User::clearErrorRegister();
+
+        return $msg;
+
+    }
+
+    public static function clearErrorRegister()
+    {
+
+        $_SESSION[User::SESSION_REGISTER] = NULL;
+
+    }
+
+    public static function checkLoginExists($login)
+    {
+        $sql = new Sql();
+
+        $result = $sql->select("SELECT * FROM tb_users WHERE deslogin = :deslogin", array(
+            ':deslogin'=>$login
+        ));
+
+        return (count($result) > 0);
 
     }
 
