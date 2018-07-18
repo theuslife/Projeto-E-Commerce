@@ -11,7 +11,8 @@ class User extends Model
     const SESSION = "User";
     const SESSION_ERROR = "UserError";
     const SECRET = "HcodePhp7_Secret";
-    const SESSION_REGISTER = "UserErrorRegister";
+    const SESSION_REGISTER_SUCESS = 'UserSucessRegister';
+    const SESSION_REGISTER_ERROR = "UserErrorRegister";
 
     public static function getFromSession()
     {   
@@ -345,30 +346,6 @@ class User extends Model
 
     }
 
-    public static function setErrorRegister($msg)
-    {
-
-        $_SESSION[User::SESSION_REGISTER] = $msg;
-
-    }
-
-    public static function getErrorRegister()
-    {
-
-        $msg = (isset($_SESSION[User::SESSION_REGISTER])) ? $_SESSION[User::SESSION_REGISTER]:'';
-
-        User::clearErrorRegister();
-
-        return $msg;
-
-    }
-
-    public static function clearErrorRegister()
-    {
-
-        $_SESSION[User::SESSION_REGISTER] = NULL;
-
-    }
 
     public static function checkLoginExists($login)
     {
@@ -379,6 +356,58 @@ class User extends Model
         ));
 
         return (count($result) > 0);
+
+    }
+
+    //Sucess
+    public static function setSucessRegister($msg)
+    {
+
+        $_SESSION[User::SESSION_REGISTER_SUCESS] = $msg;
+
+    }
+
+    public static function getSucessRegister()
+    {
+
+        $msg = (isset($_SESSION[User::SESSION_REGISTER_SUCESS])) ? $_SESSION[User::SESSION_REGISTER_SUCESS]:'';
+
+        User::clearSucessRegister();
+
+        return $msg;
+
+    }
+
+    public static function clearSucessRegister()
+    {
+
+        $_SESSION[User::SESSION_REGISTER_SUCESS] = NULL;
+
+    }
+
+    //Error
+    public static function setErrorRegister($msg)
+    {
+
+        $_SESSION[User::SESSION_REGISTER_ERROR] = $msg;
+
+    }
+
+    public static function getErrorRegister()
+    {
+
+        $msg = (isset($_SESSION[User::SESSION_REGISTER_ERROR])) ? $_SESSION[User::SESSION_REGISTER_ERROR]:'';
+
+        User::clearErrorRegister();
+
+        return $msg;
+
+    }
+
+    public static function clearErrorRegister()
+    {
+
+        $_SESSION[User::SESSION_REGISTER_ERROR] = NULL;
 
     }
 
