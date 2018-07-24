@@ -560,3 +560,78 @@ $app->get("/profile/orders/:idorder", function($idorder){
 	]);
 
 });
+
+$app->get("/profile/change-password", function(){
+
+	User::verifyLogin(false);
+
+	$page = new Page();
+
+	$page->setTpl("profile-change-password", [
+		'changePassError'=>User::getErrorRegister(),
+		'changePassSuccess'=>User::getSucessRegister()
+	]);
+
+});
+
+$app->post('/profile/change-password', function(){
+
+	User::verifyLogin(false);
+
+	//Validações
+	if (!isset($_POST['current_pass']) || $_POST['current_pass'] === '')
+	{
+		User::setErrorRegister("Digite sua senha atual.");
+		Header("Location: /profile/change-password");
+		exit;
+	}
+
+	if (!isset($_POST['new_pass']) || $_POST['new_pass'] === '')
+	{
+		User::setErrorRegister("Digite sua nova senha.");
+		Header("Location: /profile/change-password");
+		exit;
+	}
+
+	if (!isset($_POST['new_pass_confirm']) || $_POST['new_pass_confirm'] === '')
+	{
+		User::setErrorRegister("Digite sua confirmação de senha");
+		Header("Location: /profile/change-password");
+		exit;
+	}
+
+	if($_POST['current_pass'] === $_POST['new_pass'])
+	{
+		User::setErrorRegister("Sua nova senha não pode ser a mesma que a atual");
+		Header("Location: /profile/change-password");
+		exit;
+	}
+
+	if($_POST['new_pass'] !== $_POST['new_pass_confirm'])
+	{
+		User::setErrorRegister("Confirmação de senha diferente");
+		Header("Location: /profile/change-password");
+		exit;
+	}
+
+	$user = User::getFromSession();
+
+	if(!password_verify($_POST['current_pass'], $user->getdespassword()))
+	{
+		User::setErrorRegister("Senha atual foi digitada incorretamente");
+		Header("Location: /profile/change-password");
+		exit;
+	}
+
+	//Nova senha acrescentada
+	$user->setdespassword($_POST['new_pass']);
+
+	//Update realizado
+	$user->update();
+
+	User::setSucessRegister("Senha alterada com sucesso");
+	Header("Location: /profile/change-password");
+	exit;
+
+
+});
