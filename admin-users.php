@@ -15,11 +15,42 @@ $app->get("/admin/users", function(){
 	//All list of users selected from the database
 	$users = User::listAll();
 
+	//Pesquisa
+	$search = (isset($_GET['search']))? $_GET['search'] : ""; 
+
+	//Página atual
+	$page = (isset($_GET['page'])) ? (int) $_GET['page'] : 1;
+
+	if($search != '')
+	{
+		$pagination = User::getPageSearch($search, $page, 10);
+	}
+	else 
+	{
+		$pagination = User::getPage($page, 10);
+	}
+
+	$pages = [];
+
+	for ($i=0; $i < $pagination['pages'] ; $i++)
+	{ 
+		array_push($pages, [
+			'href'=>'/admin/users?' . http_build_query([
+				'page'=>$i+1,
+				'search'=>$search
+			]),
+			'text'=>$i+1
+		]);
+	}
+
+	//Tpl
 	$page = new PageAdmin();
 	
 	//Draw the users page
 	$page->setTpl("users", array(
-		"users"=>$users
+		"users"=>$pagination['data'],
+		"search"=>$search,
+		"pages"=>$pages
 	));
 
 });
