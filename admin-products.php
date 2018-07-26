@@ -10,14 +10,42 @@ $app->get("/admin/products", function(){
 
 	User::verifyLogin();
 
-	$products = new Products();
+	//Pesquisa
+	$search = (isset($_GET['search']))? $_GET['search'] : ""; 
 
-	$products = Products::read();
+	//Página atual
+	$page = (isset($_GET['page'])) ? (int) $_GET['page'] : 1;
 
+	//Pesquisa e paginação
+	if($search != '')
+	{
+		$pagination = Products::getPageSearch($search, $page, 10);
+	}
+	else 
+	{
+		$pagination = Products::getPage($page, 10);
+	}
+
+	$pages = [];
+
+	//Mandando os dados
+	for ($i=0; $i < $pagination['pages'] ; $i++)
+	{ 
+		array_push($pages, [
+			'href'=>'/admin/users?' . http_build_query([
+				'page'=>$i+1,
+				'search'=>$search
+			]),
+			'text'=>$i+1
+		]);
+	}
+	
 	$page = new PageAdmin();
 	
 	$page->setTpl("products", array(
-		"products"=>$products
+		"products"=>$pagination['data'],
+		"search"=>$search,
+		"pages"=>$pages
 	));
 
 });
