@@ -158,4 +158,55 @@ class Category extends Model
 
     }
 
+    public static function getPage($page = 1, $itemsPerPage = 10)
+    {
+
+        //Cálculo para colocarmos no LIMIT de nosso select no banco
+        $start = ($page - 1) * $itemsPerPage;
+
+        $sql = new Sql();
+
+        //Perceba a variável no ínicio de nosso LIMIT
+        $results = $sql->select("SELECT  SQL_CALC_FOUND_ROWS *
+        FROM tb_categories
+        ORDER BY descategory
+        LIMIT $start, $itemsPerPage;");
+
+        //Contagem de elementos do nosso resultado
+        $resultTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal;");
+
+        return array(
+            'data'=>$results,
+            'total'=>(int)$resultTotal[0]['nrtotal'],
+            'pages'=>ceil($resultTotal[0]['nrtotal'] / $itemsPerPage)
+        );
+        
+    }
+
+    public static function getPageSearch($search, $page = 1, $itemsPerPage = 10)
+    {
+        //Cálculo para colocarmos no LIMIT de nosso select no banco
+        $start = ($page - 1) * $itemsPerPage;
+
+        $sql = new Sql();
+
+        //Perceba a variável no ínicio de nosso LIMIT
+        $results = $sql->select("SELECT  SQL_CALC_FOUND_ROWS *
+        FROM tb_categories
+        WHERE descategory LIKE :search
+        ORDER BY descategory
+        LIMIT $start, $itemsPerPage;", [
+            ':search'=> '%' . $search . '%'
+        ]);
+
+        //Contagem de elementos do nosso resultado
+        $resultTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal;");
+
+        return array(
+            'data'=>$results,
+            'total'=>(int)$resultTotal[0]['nrtotal'],
+            'pages'=>ceil($resultTotal[0]['nrtotal'] / $itemsPerPage)
+        );
+    }
+
 }
