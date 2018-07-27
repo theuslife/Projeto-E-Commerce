@@ -187,6 +187,7 @@ $app->get("/checkout", function(){
 	}
 
 	if (!$address->getdesaddress()) $address->setdesaddress('');
+	if (!$address->getdesnumber()) $address->setdesnumber('');
 	if (!$address->getdescomplement()) $address->setdescomplement('');
 	if (!$address->getdesdistrict()) $address->setdesdistrict('');
 	if (!$address->getdescity()) $address->setdescity('');
@@ -281,8 +282,33 @@ $app->post('/checkout', function(){
 
 	$order->save();
 
-	header("Location: /order/".$order->getidorder());
+	header("Location: /order/".$order->getidorder() . "/pagseguro");
 	exit;
+
+});
+
+$app->get("/order/:idorder/pagseguro", function($idorder){
+
+	$order = new Order();
+
+	$order->get((int)$idorder);
+
+	$cart = $order->getCart();
+
+	$page = new Page([
+		'header'=>false,
+		'footer'=>false
+	]);
+
+	$page->setTpl("payment-pagseguro", [
+		'order'=>$order->getValues(),
+		'cart'=>$cart->getValues(),
+		'products'=>$cart->getProducts(),
+		'phone'=>[
+			'areaCode'=>substr($order->getnrphone(), 0, 2),
+			'number'=>substr($order->getnrphone(), 2, strlen($order->getnrphone()))
+		]
+	]);
 
 });
 
