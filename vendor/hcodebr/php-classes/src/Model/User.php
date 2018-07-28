@@ -162,6 +162,58 @@ class User extends Model
 
     }
 
+    //Validação
+    public static function validationRegister($data = array())
+    {
+
+            if(!User::validation($data['desperson']))
+            {
+                User::setErrorRegister("Digite o seu nome");
+                Header("Location: /admin/register");
+                exit;
+            };
+            if(!User::validation($data['deslogin']))
+            {
+                User::setErrorRegister("Digite o nome de usuário");
+                Header("Location: /admin/register");
+                exit;
+            }
+            if(!User::validation($data['nrphone']))
+            {
+                User::setErrorRegister("Digite o seu telefone");
+                Header("Location: /admin/register");
+                exit;
+            }
+            if(!User::validation($data['desemail']))
+            {
+                User::setErrorRegister("Digite o seu email");
+                Header("Location: /admin/register");
+                exit;
+            }
+            if(!User::validation($data['despassword']))
+            {
+                User::setErrorRegister("Digite a sua senha");
+                Header("Location: /admin/register");
+                exit;
+            }
+
+
+    }
+
+    public static function validation($data)
+    {
+
+        if(!isset($data) || $data === '')
+        {
+            return false;
+        } 
+        else
+        {
+            return true;
+        } 
+
+    }
+
     //Function ''get'' id from user
     public function get($iduser)
     {

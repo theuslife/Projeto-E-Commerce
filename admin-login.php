@@ -26,7 +26,9 @@ $app->get('/admin/login', function(){
 		"footer"=>false
 	]);
 
-	$page->setTpl("login");
+	$page->setTpl("login", [
+		'success'=>User::getSucessRegister()
+	]);
 
 });
 
@@ -50,6 +52,45 @@ $app->get('/admin/logout', function(){
 	header("Location: /admin/login");
 	
 	exit;
+});
+
+//Register a new admin member
+$app->get("/admin/register", function(){
+
+	$page = new PageAdmin([
+		'header'=>false,
+		'footer'=>false
+	]);
+
+	$page->setTpl("register", [
+		'sucess'=>User::getSucessRegister(),
+		'error'=>User::getErrorRegister()
+	]);
+
+});
+
+$app->post("/admin/register/add", function(){
+
+	$user = new User();
+
+	//Validações
+	User::validationRegister($_POST);
+
+	$user->setData([
+		'desperson'=>$_POST['desperson'],
+		'deslogin'=>$_POST['deslogin'],
+		'nrphone'=>$_POST['nrphone'],
+		'desemail'=>$_POST['desemail'],
+		'despassword'=>$_POST['despassword'],
+		'inadmin'=>$_POST['inadmin']
+	]);
+
+	$user->save();
+
+	User::setSucessRegister("Cadastro feito com sucesso");
+	Header("Location: /admin/login");
+	exit;
+
 });
 
 //If user forgets the password
