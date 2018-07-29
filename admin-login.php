@@ -116,6 +116,7 @@ $app->post("/admin/forgot", function(){
 
 //if user send a email for recovery, from post above
 $app->get("/admin/forgot/sent", function(){
+
 	$page = new PageAdmin([
 		"header"=>false,
 		"footer"=>false
@@ -143,7 +144,7 @@ $app->get("/admin/forgot/reset", function(){
 });
 
 //Success in password exchange
-$app->post("admin/forgot/reset", function(){
+$app->post("/admin/forgot/reset", function(){
 	
 	$forgot = User::validForgotDecrypt($_POST["code"]);
 
@@ -153,17 +154,15 @@ $app->post("admin/forgot/reset", function(){
 
 	$user->get((int)$forgot["iduser"]);
 	
-	password_hash($_POST["password"], PASSWORD_DEFAULT, [
-		"cost"=>12
-	]);
+	$password = password_hash($_POST["password"], PASSWORD_DEFAULT);
 
-	$user->setPassword($_POST["password"]);
+	$user->setPassword($password);
 
 	$page = new PageAdmin([
 		"header"=>false,
 		"footer"=>false
 	]);
 
-	$page->setTpl("forgot-reset-sucess");
+	$page->setTpl("forgot-reset-success");
 
 });

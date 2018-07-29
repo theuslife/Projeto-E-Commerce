@@ -1,7 +1,4 @@
 <?php if(!class_exists('Rain\Tpl')){exit;}?><!DOCTYPE html>
-<!--
-    Hcode Store by hcode.com.br
--->
 <html lang="pt-br">
   <head>
     <meta charset="utf-8">
@@ -43,13 +40,10 @@
 
                             <?php if( checkLogin(false) ){ ?>
                                 <li><a href="/profile"><i class="fa fa-user"></i><?php echo getUserName(); ?></a></li>
-                                <li><a href="#"><i class="fa fa-user"></i> Minha Conta</a></li>
-                                <li><a href="#"><i class="fa fa-heart"></i> Lista de Desejos</a></li>
                                 <li><a href="/cart"><i class="fa fa-shopping-cart"></i> Meu Carrinho</a></li>
                                 <li><a href="/logout"><i class="fa fa-user"></i>Sair</a></li>
                             <?php }else{ ?>
-                                <li><a href="#"><i class="fa fa-user"></i> Minha Conta</a></li>
-                                <li><a href="#"><i class="fa fa-heart"></i> Lista de Desejos</a></li>
+                                <li><a href="/login"><i class="fa fa-user"></i> Minha Conta</a></li>
                                 <li><a href="/cart"><i class="fa fa-shopping-cart"></i> Meu Carrinho</a></li>
                                 <li><a href="/login"><i class="fa fa-lock"></i> Login</a></li>
                             <?php } ?>
@@ -65,15 +59,6 @@
                                 <ul class="dropdown-menu">
                                     <li><a href="#">BRL</a></li>
                                     <li><a href="#">USD</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="dropdown dropdown-small">
-                                <a data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle" href="#"><span class="key">linguagem :</span><span class="value">Português </span><b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#">Português</a></li>
-                                    <li><a href="#">Inglês</a></li>
-                                    <li><a href="#">Espanhol</a></li>
                                 </ul>
                             </li>
                         </ul>

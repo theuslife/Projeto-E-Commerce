@@ -34,11 +34,7 @@
     <p class="login-box-msg">Registrar um novo administrador</p>
 
     
-    <?php if( $sucess != ''  ){ ?>
-    <div class="alert alert-success">
-        <?php echo htmlspecialchars( $sucess, ENT_COMPAT, 'UTF-8', FALSE ); ?>
-    </div>
-    <?php } ?>
+
 
     <?php if( $error != ''  ){ ?>
     <div class="alert alert-danger">

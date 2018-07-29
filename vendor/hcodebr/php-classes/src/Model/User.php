@@ -263,7 +263,7 @@ class User extends Model
     }
 
     //Get user email
-    public static function getForgot($email)
+    public static function getForgot($email, $inadmin = true)
     {
 
         $sql = new Sql();
@@ -305,7 +305,15 @@ class User extends Model
 
                 $result = base64_encode($iv.$code);
 
-                $link = "http://www.e-commerce.com.br/admin/forgot/reset?code=$code";
+                if($inadmin === true)
+                {
+                    $link = "http://www.e-commerce.com.br/admin/forgot/reset?code=$result";
+                }
+                else 
+                {
+                    $link = "http://www.e-commerce.com.br/forgot/reset?code=$result";
+                }
+                
 
                 $mailer = new Mailer($data["desemail"], $data["desperson"], "Redefinir Senha da Hcode Store", "forgot", array(
                     "name"=>$data["desperson"],
@@ -321,15 +329,15 @@ class User extends Model
 
     }
 
-    public static function validForgotDecrypt($code)
+    public static function validForgotDecrypt($result)
     {
         
-        $code = base64_decode($code);
+        $result = base64_decode($result);
         
         //Encrypt and Decrypt
-        $code = mb_substr($code, openssl_cipher_iv_length('aes-256-cbc'), null, '8bit');
+        $code = mb_substr($result, openssl_cipher_iv_length('aes-256-cbc'), null, '8bit');
         
-        $iv = mb_substr($code, 0, openssl_cipher_iv_length('aes-256-cbc'), '8bit');
+        $iv = mb_substr($result, 0, openssl_cipher_iv_length('aes-256-cbc'), '8bit');
 
         $idrecovery = openssl_decrypt($code, 'aes-256-cbc', User::SECRET, 0, $iv);
 
