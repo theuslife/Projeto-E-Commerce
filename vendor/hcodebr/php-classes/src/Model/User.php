@@ -286,6 +286,7 @@ class User extends Model
 
             $recoveryResults = $sql->select("CALL sp_userspasswordsrecoveries_create(:iduser, :desip)", array(
                 ":iduser"=>$data["iduser"],
+                //Ip do usuário
                 ":desip"=>$_SERVER["REMOTE_ADDR"]
             ));
 
@@ -301,6 +302,8 @@ class User extends Model
                 $iv = random_bytes(openssl_cipher_iv_length('aes-256-cbc'));
                 
                 $code = openssl_encrypt($dataRecovery["idrecovery"], 'aes-256-cbc', USER::SECRET, 0, $iv);
+
+                $result = base64_encode($iv.$code);
 
                 $link = "http://www.e-commerce.com.br/admin/forgot/reset?code=$code";
 
