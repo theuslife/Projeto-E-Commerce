@@ -6,7 +6,7 @@ Ferramentas utilizadas: Slim 2.0 (Para rotas), RainTPL 3.0 (Para as views) e PHP
 
 Projeto desenvolvido do zero no Curso de PHP 7 disponível na plataforma da Udemy
 
-Template usado no projeto Almsaeed Studio
+Template usado no projeto [Almsaeed Studio](https://almsaeedstudio.com)
 
 ## Login de administração
 ![](img_readme/8.png)
